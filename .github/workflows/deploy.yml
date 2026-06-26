@@ -13,18 +13,17 @@ jobs:
       - name: Checkout repository code
         uses: actions/checkout@v4
 
-      # Робот заливает ВСЮ папку plugins_and_configs в твой домашний каталог meowzonn
-      - name: Copy files via SSH
-        uses: appleboy/scp-action@v0.1.7
+      - name: Sync files to Server
+        uses: Burnett01/rsync-deployments@v7.0.1
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_KEY }}
-          port: 22
-          source: "plugins_and_configs/"
-          target: "/home/meowzonn/cs2_updates/"
+          switches: "-avzr --delete"
+          path: "plugins_and_configs/"
+          remote_path: "/home/meowzonn/cs2_updates/"
+          remote_host: ${{ secrets.SERVER_HOST }}
+          remote_user: ${{ secrets.SERVER_USER }}
+          remote_key: ${{ secrets.SERVER_KEY }}
+          remote_port: 22
 
-      # На самом сервере перекидываем файлы к Стиму и рестартуем службу
       - name: Move files and Restart CS2 Service
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -33,42 +32,5 @@ jobs:
           key: ${{ secrets.SERVER_KEY }}
           port: 22
           script: |
-            # Переносим содержимое (с флагом -f, чтобы не спрашивал подтверждения)
-            sudo cp -rf /home/meowzonn/cs2_updates/plugins_and_configs/* /home/steam/cs2_server/game/csgo/addons/counterstrikesharp/ || true
-            # Перезапускаем сервер
-            sudo systemctl restart cs2.service
-name: Deploy CS2 Configs
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository code
-        uses: actions/checkout@v4
-
-      # Чистый SSH-экшен без всяких tar и scp-костылей
-      - name: Upload and Restart via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_KEY }}
-          port: 22
-          script: |
-            # Создаем папку обновлений у meowzonn
-            mkdir -p ~/cs2_updates
-            
-            # Скачиваем файл прямо из твоего гитхаба одной командой на сервер
-            curl -sL https://githubusercontent.com{{ github.repository }}/main/plugins_and_configs/test.txt -o ~/cs2_updates/test.txt
-            
-            # Копируем его в папку стима через sudo (права мы настроили)
-            sudo cp ~/cs2_updates/test.txt /home/steam/cs2_server/game/csgo/addons/counterstrikesharp/test.txt
-            
-            # Даем пинка серверу кски
+            sudo cp -rf /home/meowzonn/cs2_updates/* /home/steam/cs2_server/game/csgo/addons/counterstrikesharp/ || true
             sudo systemctl restart cs2.service
