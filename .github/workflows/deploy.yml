@@ -3,18 +3,17 @@ name: Deploy CS2 Configs
 on:
   push:
     branches:
-      - main # Робот сработает, когда ты закинешь файлы в главную ветку
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Робот забирает файлы из твоего репозитория на гитхабе
       - name: Checkout repository code
         uses: actions/checkout@v4
 
-      # Робот копирует файлы на твой Ryzen по проброшенному SSH (SFTP)
+      # Обновленный шаг копирования без капризных масок
       - name: Copy files via SSH
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -22,11 +21,9 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_KEY }}
           port: 22
-          source: "plugins_and_configs/*" # Папка с конфигами в твоем репозитории
-          # Точный путь к твоим плагинам на сервере (куда FileZilla смотрит)
+          source: "plugins_and_configs" # Указали просто папку
           target: "/home/steam/cs2_server/game/csgo/addons/counterstrikesharp/"
 
-      # Робот дает пинка службе кски, чтобы применить конфиги
       - name: Restart CS2 Service
         uses: appleboy/ssh-action@v1.0.3
         with:
