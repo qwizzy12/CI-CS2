@@ -42,7 +42,7 @@ cs2-mysql:
     image: mysql:8.0
     container_name: cs2-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: "придумай_любой_пароль"
+      MYSQL_ROOT_PASSWORD: "ваш_пароль"
       MYSQL_DATABASE: "cs2_stats"
     ports:
       - "3306:3306"
