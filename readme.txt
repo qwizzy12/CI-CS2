@@ -3,11 +3,11 @@
 Репозиторий содержит декларативное описание инфраструктуры игрового сервера и автоматизированный GitOps-пайплайн для непрерывной доставки (CD) конфигураций и игровых плагинов.
 
 ##Технологический стек
-ОС**: Linux (Ubuntu Server)
-Контейнеризация**: Docker, Docker Compose
-CI/CD**: GitHub Actions, Rsync, SSH-action
-Observability**: Prometheus, Node Exporter, Grafana
-БД**: MySQL 8.0
+ОС: Linux (Ubuntu Server)
+Контейнеризация: Docker, Docker Compose
+CI/CD: GitHub Actions, Rsync, SSH-action
+Observability: Prometheus, Node Exporter, Grafana
+БД: MySQL 8.0
 
 ##Архитектура и Автоматизация
 
